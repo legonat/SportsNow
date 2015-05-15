@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SportsNow</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Choose another club</string>
+    <string name="refresh">Refresh</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="greeting">Read football news whenever tou want!</string>
+</resources>
