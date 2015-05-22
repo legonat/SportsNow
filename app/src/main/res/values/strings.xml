@@ -7,4 +7,6 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="greeting">Read football news whenever tou want!</string>
+    <string name="selection">Select club</string>
+    <string name="clubNews">club news</string>
 </resources>

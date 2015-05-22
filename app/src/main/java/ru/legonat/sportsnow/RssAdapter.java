@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -20,7 +19,7 @@ public class RssAdapter extends BaseAdapter {
 
     private final List<RssItem> items;
     private final Context context;
-    private String imageURL = null;
+
 
     public RssAdapter(Context context, List<RssItem> items) {
         this.items = items;
@@ -57,7 +56,7 @@ public class RssAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.itemTitle.setText(items.get(position).getTitle());// populating news list
+        holder.itemTitle.setText(items.get(position).getTitle());// populating listView
         pDate=items.get(position).getDate();
         try {
             date=df.parse(pDate);
@@ -73,6 +72,5 @@ public class RssAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView itemTitle;
         TextView itemDate;
-        ImageView itemThumb;
     }
 }

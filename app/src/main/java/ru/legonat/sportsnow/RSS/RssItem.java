@@ -6,19 +6,16 @@ package ru.legonat.sportsnow.RSS;
  * @author Veaceslav Grec
  *
  */
-public class RssItem { //getting items
+public class RssItem {
 
     private final String title;
     private final String link;
     private final String date;
-    //  private final String image;
 
     public RssItem(String title, String link, String date){
         this.title = title;
         this.link = link;
         this.date = date;
-
-
     }
 
     public String getTitle() {

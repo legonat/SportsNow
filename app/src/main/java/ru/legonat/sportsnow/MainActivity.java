@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,35 +19,38 @@ import ru.legonat.sportsnow.DatabaseReader.DB;
 public class MainActivity extends ActionBarActivity {
     public static int selectedClub=0;
     SharedPreferences sPref;
-    final String CHOSEN_CLUB = "saved_text";
+    final String CHOSEN_CLUB = "saved_club";
+    final String FINISHED_TUTORIAL = "saved_bool";
     public static int DBsize=16;
     public static String[] names= new String[DBsize];
     public static String[] urls= new String[DBsize];
     static final private int CHOOSE_CLUB=0;
-    final String LOG_TAG = "myLogs";
-    public static String clubUrl="null";
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         testPreLoadedSQLiteDb();
         loadText();
-        if (selectedClub==0) { // checking if user have already chosen club
+        if (Constants.APP_TUTORIAL==0) { // checking if user have already started application
+            //if not chosen, loading ScreenSlideActivity
+            Intent questionIntent = new Intent(MainActivity.this, ScreenSlideActivity.class);
+            startActivityForResult(questionIntent, CHOOSE_CLUB);
+        }
+        else if (selectedClub==0){// checking if user have already chosen club
             //if not chosen, loading ClubsList
             Intent questionIntent = new Intent(MainActivity.this, ClubsList.class);
             startActivityForResult(questionIntent, CHOOSE_CLUB);
         }
-        else { //if chosen, loading news
+        else {//if club is chosen, loading news
             if (savedInstanceState == null) {
-                clubUrl=urls[selectedClub];
+                Constants.RSS_LINK=urls[selectedClub];
+                String Name= names[selectedClub];
                 addRssFragment();
             }
         }
+
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -62,19 +65,17 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
 
             case R.id.refresh: // refresh list of news
-                Intent i = getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getBaseContext().getPackageName() );
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+
+                reloadRssFragment();
 
                 return true;
 
             case R.id.action_settings: // choosing another club from list
                 clearPrefs();
                 finish();
-                Intent un = new Intent(this, MainActivity.class);
+                Intent chooseAnother = new Intent(this, MainActivity.class);
 
-                startActivity(un);
+                startActivity(chooseAnother);
 
                 return true;
         }
@@ -88,6 +89,18 @@ public class MainActivity extends ActionBarActivity {
         RssFragment fragment = new RssFragment();
         transaction.add(R.id.fragment_container, fragment);
         transaction.commit();
+        TextView clubNews=(TextView)findViewById(R.id.clubName);
+        clubNews.setText(names[selectedClub] + " club news");
+    }
+    private void reloadRssFragment() { //reloading fragment
+        loadText();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        RssFragment fragment = new RssFragment();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
+        TextView clubNews=(TextView)findViewById(R.id.clubName);
+        clubNews.setText(names[selectedClub] + " club news");
     }
 
     @Override
@@ -99,14 +112,16 @@ public class MainActivity extends ActionBarActivity {
 
                 selectedClub = data.getIntExtra("CLUB", 0);// getting number from result
                 saveText();
-
-                clubUrl=urls[selectedClub]; //choosing URL from a string
-                addRssFragment();
+                Constants.APP_TUTORIAL=1;
+                Constants.RSS_LINK=urls[selectedClub];
+                reloadRssFragment();
             }
 
         }
 
     }
+
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -129,30 +144,33 @@ public class MainActivity extends ActionBarActivity {
         if (db.open()) {
 
 
-            Log.d(LOG_TAG, "checked4: works" );
             for (int n = 0; n < clubs.size(); n++) {
                 String name = clubs.get(n).name;
                 String url = clubs.get(n).url;
-                names[n]=name;// populating names string
-                urls[n]=url;// populating urls string
+                names[n]=name;// populating names array
+                urls[n]=url;// populating urls array
             }
         }
+        db.close();
     }
-    void saveText() { // save num in pref file
+    public void saveText() { // save num in pref file
         sPref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
         ed.putInt(CHOSEN_CLUB, selectedClub);
+        ed.putInt(FINISHED_TUTORIAL, 1);
         ed.commit();
 
     }
 
-    void loadText() { //load num from pref file
+    public void loadText() { //load num from pref file
         sPref = getPreferences(MODE_PRIVATE);
+        int savedBool = sPref.getInt(FINISHED_TUTORIAL,0);
         int savedNum = sPref.getInt(CHOSEN_CLUB,0);
         selectedClub=savedNum;
+        Constants.APP_TUTORIAL=savedBool;
 
     }
-    void clearPrefs() { // clear pref in case user want to chose another club
+    public void clearPrefs() { // clear pref in case user want to chose another club
         sPref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
         ed.putInt(CHOSEN_CLUB, 0);

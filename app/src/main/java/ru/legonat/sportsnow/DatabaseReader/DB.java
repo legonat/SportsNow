@@ -6,7 +6,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,7 +44,6 @@ public class DB extends SQLiteOpenHelper {
         boolean dbExist = checkDataBase();
 
         if (dbExist) {
-            this.getReadableDatabase();
             //do nothing - database already exist
         } else {
 
@@ -80,7 +78,6 @@ public class DB extends SQLiteOpenHelper {
         } catch (SQLiteException e) {
 
             // database don't exist yet.
-            Log.d(LOG_TAG, "checked2: ");
             e.printStackTrace();
 
         }
@@ -90,13 +87,7 @@ public class DB extends SQLiteOpenHelper {
             checkDB.close();
 
         }
-//        else {
-//            try {
-//                copyDataBase();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+
 
         return checkDB != null ? true : false;
     }
@@ -201,7 +192,6 @@ public class DB extends SQLiteOpenHelper {
                     clubs.add(club);
 
                 } while (cursor.moveToNext());
-                //  cursor.close();
             }
         } catch (Exception e) {
             // sql error

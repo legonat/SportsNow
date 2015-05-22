@@ -4,5 +4,10 @@
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryDark">@color/dark_blue</item>
     </style>
+    <style name="ScreenSlideTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/dark_blue</item>
+        <item name="windowActionBar">false</item>
+    </style>
 
 </resources>

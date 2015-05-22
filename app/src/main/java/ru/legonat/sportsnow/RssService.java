@@ -14,12 +14,11 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 
-import ru.legonat.sportsnow.RSS.PcWorldRssParser;
 import ru.legonat.sportsnow.RSS.RssItem;
+import ru.legonat.sportsnow.RSS.RssParser;
 
 public class RssService extends IntentService {
 
-    public static final String RSS_LINK = MainActivity.clubUrl;// достать значение из pref
     public static final String ITEMS = "items";
     public static final String RECEIVER = "receiver";
 
@@ -29,11 +28,11 @@ public class RssService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(Constants.TAG, "Service started");
+        Log.d(Constants.TAG, "Service started " + Constants.RSS_LINK);
         List<RssItem> rssItems = null;
         try {
-            PcWorldRssParser parser = new PcWorldRssParser();
-            rssItems = parser.parse(getInputStream(RSS_LINK));
+            RssParser parser = new RssParser();
+            rssItems = parser.parse(getInputStream(Constants.RSS_LINK));
         } catch (XmlPullParserException e) {
             Log.w(e.getMessage(), e);
         } catch (IOException e) {

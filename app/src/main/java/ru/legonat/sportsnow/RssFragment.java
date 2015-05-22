@@ -21,7 +21,6 @@ import ru.legonat.sportsnow.RSS.RssItem;
 
 public class RssFragment extends Fragment implements OnItemClickListener {
 
-    private static final String LOG_TAG ="" ;
     private ProgressBar progressBar;
     private ListView listView;
     private View view;
@@ -51,7 +50,7 @@ public class RssFragment extends Fragment implements OnItemClickListener {
     }
 
 
-    private void startService() {
+    public void startService() {
         Intent intent = new Intent(getActivity(), RssService.class);
         intent.putExtra(RssService.RECEIVER, resultReceiver);
         getActivity().startService(intent);
@@ -69,8 +68,8 @@ public class RssFragment extends Fragment implements OnItemClickListener {
             List<RssItem> items = (List<RssItem>) resultData.getSerializable(RssService.ITEMS);
             if (items != null) {
                 RssAdapter adapter = new RssAdapter(getActivity(), items);
-                adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getActivity(), "An error occured while downloading the rss feed.",
                         Toast.LENGTH_LONG).show();
@@ -82,10 +81,10 @@ public class RssFragment extends Fragment implements OnItemClickListener {
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         RssAdapter adapter = (RssAdapter) parent.getAdapter();
         RssItem item = (RssItem) adapter.getItem(position);
-        Uri uri = Uri.parse(item.getLink());
-        String url=uri.toString();
+        Uri uri = Uri.parse(item.getLink());//getting Link
+        String url=uri.toString();// converting Uri to String
         Intent vWIntent = new Intent(RssFragment.this.getActivity(), WebViewActivity.class);
-        vWIntent.putExtra("myURL", url);
+        vWIntent.putExtra("myURL", url);// sending Url to WebViewActivity
         startActivity(vWIntent);
 
     }
