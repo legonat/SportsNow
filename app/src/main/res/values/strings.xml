@@ -9,4 +9,5 @@
     <string name="greeting">Read football news whenever tou want!</string>
     <string name="selection">Select club</string>
     <string name="clubNews">club news</string>
+	<string name="newTest">Test</string>
 </resources>
